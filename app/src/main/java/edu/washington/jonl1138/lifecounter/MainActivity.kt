@@ -3,7 +3,7 @@ package edu.washington.jonl1138.lifecounter
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -25,9 +25,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+
+        val status = findViewById<TextView>(R.id.status)
         for (i in 1..4) {
             for (j in 1..4) {
-                var modifier:String = "1"
+                var modifier = "1"
                 if (j == 2) {
                     modifier = "-1"
                 } else if (j == 3) {
@@ -37,15 +39,32 @@ class MainActivity : AppCompatActivity() {
                 }
                 val currentID = "p" + i.toString() + modifier
                 val resID = resources.getIdentifier(currentID, "id", "edu.washington.jonl1138.lifecounter")
-
                 val currentButton = findViewById<Button>(resID)
-                Log.i("debugging", this.javaClass.name)
-                currentButton.setOnClickListener( CustomClickListener(currentID, this) )
-                /*
+
                 currentButton.setOnClickListener {
-                    Log.i("debugging", "clicked!")
+                    val currentPlayer = currentID[1].toString()
+                    val increment: String
+                    if (currentID.length == 3) {
+                        increment = currentID[2].toString()
+                    } else {
+                        increment = currentID.substring(2,4)
+                    }
+                    val playerValue:String = "p" + currentPlayer + "_lives"
+                    val matchingResID = resources.getIdentifier(playerValue, "id", "edu.washington.jonl1138.lifecounter")
+                    val matchingTextView = findViewById<TextView>(matchingResID)
+                    val oldText:String = matchingTextView.text.toString()
+                    val newValue:Int = Integer.parseInt(oldText.substring(oldText.indexOf(' ') + 1, oldText.length)) + Integer.parseInt(increment)
+                    matchingTextView.text = "Lives: " + newValue.toString()
+
+                    Log.d("debugging", "reached here")
+                    if (newValue <= 0 ) {
+                        Log.d("debugging", "below zero!")
+                        status.text = "Player " + currentPlayer + " LOSES!"
+                        status.setVisibility(View.VISIBLE)
+                    }
+
                 }
-                */
+
             }
         }
 
@@ -70,39 +89,6 @@ class MainActivity : AppCompatActivity() {
 }
 
 
-class CustomClickListener(internal val id: String, internal val context: Context): View.OnClickListener {
-
-    var player: String = ""
-    var increment: String = ""
-
-
-    init {
-        player = id[1].toString()
-        if (id.length == 3) {
-            increment = id[2].toString()
-        } else {
-            increment = id.substring(2,4)
-        }
-    }
-    override fun onClick(v: View) {
-        val playerValue:String = "p" + player + "_lives"
-        val resID = v.resources.getIdentifier(playerValue, "id", "edu.washington.jonl1138.lifecounter")
-
-        val parent: ViewParent =  v.parent.parent
-        Log.i("debugging", parent.javaClass.name)
-        try {
-            val p1 = v.findViewById<TextView>(resID)
-        }
-        catch (e: NullPointerException) {
-            Log.i("debugging", e.toString())
-        }
-        /*
-        val oldText:String = p1.text.toString()
-        val newValue:Int = Integer.parseInt(oldText.substring(oldText.length-1,oldText.length)) + Integer.parseInt(increment)
-        p1.text = "Lives: " + newValue.toString()
-        */
-    }
-}
 
 
 
