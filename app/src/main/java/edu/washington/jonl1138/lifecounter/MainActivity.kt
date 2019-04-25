@@ -1,5 +1,6 @@
 package edu.washington.jonl1138.lifecounter
 
+import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity;
@@ -7,10 +8,13 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewParent
 import android.widget.Button
+import android.widget.TableLayout
 import android.widget.TextView
 
 import kotlinx.android.synthetic.main.activity_main.*
+import java.lang.NullPointerException
 
 import java.security.AccessController.getContext
 
@@ -31,20 +35,17 @@ class MainActivity : AppCompatActivity() {
                 } else if (j == 4){
                     modifier = "-5"
                 }
-
-
-
                 val currentID = "p" + i.toString() + modifier
-
-
                 val resID = resources.getIdentifier(currentID, "id", "edu.washington.jonl1138.lifecounter")
-                Log.i("debugging", currentID)
-                Log.i("debugging", resID.toString())
 
                 val currentButton = findViewById<Button>(resID)
-                Log.i("debugging", currentButton.toString())
-                currentButton.setOnClickListener { CustomClickListener(currentID) }
-
+                Log.i("debugging", this.javaClass.name)
+                currentButton.setOnClickListener( CustomClickListener(currentID, this) )
+                /*
+                currentButton.setOnClickListener {
+                    Log.i("debugging", "clicked!")
+                }
+                */
             }
         }
 
@@ -69,10 +70,11 @@ class MainActivity : AppCompatActivity() {
 }
 
 
-class CustomClickListener(val id: String): View.OnClickListener {
+class CustomClickListener(internal val id: String, internal val context: Context): View.OnClickListener {
 
     var player: String = ""
     var increment: String = ""
+
 
     init {
         player = id[1].toString()
@@ -83,13 +85,24 @@ class CustomClickListener(val id: String): View.OnClickListener {
         }
     }
     override fun onClick(v: View) {
-        Log.i("debugging", "clicked")
         val playerValue:String = "p" + player + "_lives"
         val resID = v.resources.getIdentifier(playerValue, "id", "edu.washington.jonl1138.lifecounter")
-        val p1 = v.findViewById<TextView>(resID)
+
+        val parent: ViewParent =  v.parent.parent
+        Log.i("debugging", parent.javaClass.name)
+        try {
+            val p1 = v.findViewById<TextView>(resID)
+        }
+        catch (e: NullPointerException) {
+            Log.i("debugging", e.toString())
+        }
+        /*
         val oldText:String = p1.text.toString()
         val newValue:Int = Integer.parseInt(oldText.substring(oldText.length-1,oldText.length)) + Integer.parseInt(increment)
         p1.text = "Lives: " + newValue.toString()
+        */
     }
 }
+
+
 
